@@ -171,6 +171,65 @@ class VendorController extends Controller
     }
 
     /**
+     * Update vendor profile (for approved vendors)
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user->hasVendor()) {
+            return response()->json([
+                'message' => 'Anda belum memiliki akun vendor',
+            ], 404);
+        }
+
+        $vendor = $user->vendor;
+
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'business_name' => 'sometimes|required|string|max:150',
+            'description' => 'nullable|string',
+            'business_type' => 'sometimes|required|string|max:100',
+            'business_address' => 'sometimes|required|string',
+            'business_phone' => 'sometimes|required|string|max:20',
+            'business_email' => 'sometimes|required|email|max:100',
+            'tax_id' => 'nullable|string|max:50',
+            'business_license' => 'nullable|string|max:100',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        // Update vendor profile
+        $vendor->update($request->only([
+            'business_name',
+            'description',
+            'business_type',
+            'business_address',
+            'business_phone',
+            'business_email',
+            'tax_id',
+            'business_license',
+        ]));
+
+        // Log activity
+        AuditLog::log(
+            'vendor_profile_update',
+            $vendor,
+            "Vendor profile updated: {$vendor->business_name}"
+        );
+
+        return response()->json([
+            'message' => 'Vendor profile berhasil diperbarui',
+            'vendor' => $vendor->fresh(),
+        ]);
+    }
+
+    /**
      * Get vendor details
      */
     public function show(Request $request)

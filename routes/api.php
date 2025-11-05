@@ -84,6 +84,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/vendor/status', [VendorController::class, 'status']);
     Route::post('/vendor/apply', [VendorController::class, 'apply']);
     Route::put('/vendor/update', [VendorController::class, 'update']);
+    Route::put('/vendor/profile', [VendorController::class, 'updateProfile']);
     Route::get('/vendor', [VendorController::class, 'show']);
 
     // Vendor Dashboard - for vendors to manage their business

@@ -108,6 +108,11 @@ Route::middleware([
             ]);
         });
 
+        // Vendor Profile
+        Route::get('/vendor/profile', function () {
+            return Inertia::render('Vendor/Profile');
+        });
+
         // Vendor Products
         Route::get('/vendor/products', function () {
             return Inertia::render('Vendor/Products/Index');
