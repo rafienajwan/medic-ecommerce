@@ -326,21 +326,46 @@ const loadDashboardData = async () => {
         // Load products
         const productsResponse = await axios.get('/api/vendor/products');
         products.value = productsResponse.data.data.slice(0, 5); // Get latest 5
+        const allProducts = productsResponse.data.data;
 
         // Load orders
         const ordersResponse = await axios.get('/api/vendor/orders');
         orders.value = ordersResponse.data.data.slice(0, 5); // Get latest 5
+        const allOrders = ordersResponse.data.data;
 
-        // Load stats
-        const statsResponse = await axios.get('/api/vendor/dashboard/stats');
+        // Calculate stats from actual data
+        const totalRevenue = allOrders
+            .filter(order => order.status === 'delivered' || order.status === 'processing')
+            .reduce((sum, order) => {
+                // Sum all items from this vendor
+                const vendorTotal = order.items
+                    .filter(item => item.product && item.product.vendor_id === props.vendor.id)
+                    .reduce((itemSum, item) => itemSum + (item.subtotal || 0), 0);
+                return sum + vendorTotal;
+            }, 0);
+
+        const pendingOrders = allOrders.filter(order => order.status === 'pending').length;
+
         stats.value = {
-            total_products: productsResponse.data.data.length,
-            active_products: productsResponse.data.data.filter(p => p.is_active).length,
-            ...statsResponse.data,
-            low_stock_products: productsResponse.data.data.filter(p => p.stock < 10).length,
+            total_products: allProducts.length,
+            active_products: allProducts.filter(p => p.is_active).length,
+            total_orders: allOrders.length,
+            pending_orders: pendingOrders,
+            total_revenue: totalRevenue,
+            low_stock_products: allProducts.filter(p => p.stock < 10).length,
         };
     } catch (err) {
         console.error('Failed to load dashboard:', err);
+        
+        // Fallback to zero values on error
+        stats.value = {
+            total_products: products.value.length,
+            active_products: products.value.filter(p => p.is_active).length,
+            total_orders: orders.value.length,
+            pending_orders: orders.value.filter(o => o.status === 'pending').length,
+            total_revenue: 0,
+            low_stock_products: products.value.filter(p => p.stock < 10).length,
+        };
     } finally {
         loading.value = false;
         loadingOrders.value = false;
