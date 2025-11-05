@@ -46,7 +46,7 @@ export function useIdleDetector() {
         // Redirect to login with timeout message
         router.visit('/login', {
             method: 'get',
-            data: { 
+            data: {
                 timeout: true,
                 message: 'Your session has expired due to inactivity (60 seconds).'
             },

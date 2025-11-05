@@ -8,7 +8,7 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import IdleWarningModal from '@/Components/IdleWarningModal.vue';
-import { useIdleDetector } from '@/Composables/useIdleDetector';
+import { useIdleDetector } from '@/composables/useIdleDetector';
 
 defineProps({
     title: String,
@@ -308,8 +308,8 @@ const logout = () => {
         </div>
 
         <!-- Idle Warning Modal -->
-        <IdleWarningModal 
-            :show="idleDetector.showWarning.value" 
+        <IdleWarningModal
+            :show="idleDetector.showWarning.value"
             :time-remaining="timeRemaining"
             @stay-active="handleStayActive"
         />
