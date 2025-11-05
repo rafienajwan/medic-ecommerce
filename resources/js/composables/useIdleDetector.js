@@ -12,8 +12,10 @@ export function useIdleDetector() {
     }
 
     const idleTime = ref(0);
-    const maxIdleTime = 1800; // 30 minutes (reasonable for e-commerce)
-    const heartbeatInterval = 240; // Ping every 4 minutes
+    const maxIdleTime = 60; // 60 seconds idle timeout
+    const heartbeatInterval = 30; // Ping every 30 seconds
+    const showWarning = ref(false);
+    const warningTime = 40; // Show warning after 40 seconds (20s before timeout)
 
     let idleTimer = null;
     let heartbeatTimer = null;
@@ -21,6 +23,7 @@ export function useIdleDetector() {
 
     const resetIdleTimer = () => {
         idleTime.value = 0;
+        showWarning.value = false;
         lastActivity = Date.now();
     };
 
@@ -38,9 +41,15 @@ export function useIdleDetector() {
         if (idleTimer) clearInterval(idleTimer);
         if (heartbeatTimer) clearInterval(heartbeatTimer);
 
-        // No alert - just redirect to login silently
+        console.error('🔒 Session expired after 60 seconds of inactivity');
+
+        // Redirect to login with timeout message
         router.visit('/login', {
             method: 'get',
+            data: { 
+                timeout: true,
+                message: 'Your session has expired due to inactivity (60 seconds).'
+            },
             onSuccess: () => {
                 sessionStorage.clear();
             }
@@ -53,6 +62,13 @@ export function useIdleDetector() {
 
         idleTime.value = timeSinceLastActivity;
 
+        // Show warning at 40 seconds (20s before logout)
+        if (timeSinceLastActivity >= warningTime && !showWarning.value) {
+            showWarning.value = true;
+            console.warn('⚠️ Session will expire in 20 seconds due to inactivity');
+        }
+
+        // Logout at 60 seconds
         if (timeSinceLastActivity >= maxIdleTime) {
             handleSessionExpired();
         }
@@ -129,6 +145,8 @@ export function useIdleDetector() {
     globalInstance = {
         idleTime,
         maxIdleTime,
+        showWarning,
+        timeRemaining: ref(() => Math.max(0, maxIdleTime - idleTime.value)),
         resetIdleTimer,
         init,  // Expose init for manual initialization
         cleanup: () => {
@@ -137,7 +155,7 @@ export function useIdleDetector() {
         }
     };
 
-    console.log('Creating NEW idle detector instance (NOT initialized yet)');
+    console.log('Creating NEW idle detector instance (60s timeout, NOT initialized yet)');
 
     return globalInstance;
 }

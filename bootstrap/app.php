@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+            \App\Http\Middleware\SessionExpiry::class, // Auto-logout after 60s idle
         ]);
 
         // CRITICAL: Add Sanctum's stateful middleware to API routes
@@ -22,9 +23,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->api(prepend: [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);
-
-        // NOTE: SessionExpiry middleware REMOVED from web group
-        // Let Jetstream handle web session management natively
 
         // Alias for middleware
         $middleware->alias([

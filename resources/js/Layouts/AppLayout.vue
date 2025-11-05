@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import ApplicationMark from '@/Components/ApplicationMark.vue';
 import Banner from '@/Components/Banner.vue';
@@ -7,12 +7,33 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import IdleWarningModal from '@/Components/IdleWarningModal.vue';
+import { useIdleDetector } from '@/Composables/useIdleDetector';
 
 defineProps({
     title: String,
 });
 
 const showingNavigationDropdown = ref(false);
+
+// Initialize idle detector
+const idleDetector = useIdleDetector();
+const timeRemaining = computed(() => Math.max(0, idleDetector.maxIdleTime - idleDetector.idleTime.value));
+
+onMounted(() => {
+    // Start idle detection
+    idleDetector.init();
+    console.log('✅ Idle detector initialized in AppLayout (60s timeout)');
+});
+
+onUnmounted(() => {
+    // Cleanup on unmount
+    idleDetector.cleanup();
+});
+
+const handleStayActive = () => {
+    idleDetector.resetIdleTimer();
+};
 
 const switchToTeam = (team) => {
     router.put(route('current-team.update'), {
@@ -285,5 +306,12 @@ const logout = () => {
                 <slot />
             </main>
         </div>
+
+        <!-- Idle Warning Modal -->
+        <IdleWarningModal 
+            :show="idleDetector.showWarning.value" 
+            :time-remaining="timeRemaining"
+            @stay-active="handleStayActive"
+        />
     </div>
 </template>
