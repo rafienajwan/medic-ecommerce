@@ -210,7 +210,7 @@ class OrderController extends Controller
         if (!Auth::check()) {
             abort(401);
         }
-        
+
         $order = Order::with(['items.product', 'user'])
             ->where('user_id', Auth::id())
             ->findOrFail($id);
