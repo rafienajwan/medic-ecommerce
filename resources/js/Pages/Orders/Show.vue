@@ -51,6 +51,28 @@
                         </p>
                     </div>
 
+                    <!-- Confirm Delivery Button -->
+                    <div v-if="canConfirmDelivery(order)" class="mb-6">
+                        <button
+                            @click="confirmDelivery"
+                            :disabled="confirming"
+                            class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 disabled:bg-gray-400 mr-3"
+                        >
+                            {{ confirming ? 'Confirming...' : '✓ Confirm Delivery Received' }}
+                        </button>
+                        <p class="text-sm text-gray-500 mt-2">
+                            Click this button if you have received your order. Payment will be released to the vendor.
+                        </p>
+                    </div>
+
+                    <!-- Already Confirmed Message -->
+                    <div v-if="order.status === 'delivered' && order.payment_status === 'paid'" class="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+                        <p class="text-green-800 font-semibold">✓ Delivery Confirmed</p>
+                        <p class="text-sm text-green-600 mt-1">
+                            You confirmed receipt of this order. Payment has been released to the vendor.
+                        </p>
+                    </div>
+
                     <div class="grid grid-cols-2 gap-6 border-t pt-6">
                         <div>
                             <h3 class="font-semibold text-gray-700 mb-2">Shipping Address</h3>
@@ -157,6 +179,7 @@ const props = defineProps({
 
 const order = ref(null);
 const cancelling = ref(false);
+const confirming = ref(false);
 
 const formatPrice = (price) => {
     return new Intl.NumberFormat('id-ID').format(price);
@@ -197,6 +220,11 @@ const canCancelOrder = (order) => {
     return order.status === 'pending' || order.status === 'processing';
 };
 
+const canConfirmDelivery = (order) => {
+    // Customer can confirm if status is delivered and payment not yet paid
+    return order.status === 'delivered' && order.payment_status !== 'paid';
+};
+
 const cancelOrder = async () => {
     if (!confirm('Are you sure you want to cancel this order? This action cannot be undone.')) {
         return;
@@ -211,6 +239,25 @@ const cancelOrder = async () => {
         console.error(error.response?.data?.message || 'Failed to cancel order');
     } finally {
         cancelling.value = false;
+    }
+};
+
+const confirmDelivery = async () => {
+    if (!confirm('Confirm that you have received this order? Payment will be released to the vendor.')) {
+        return;
+    }
+
+    confirming.value = true;
+
+    try {
+        const response = await axios.post(`/api/orders/${props.orderId}/confirm-delivery`);
+        alert(response.data.message || 'Delivery confirmed successfully!');
+        await loadOrder(); // Reload order data
+    } catch (error) {
+        alert(error.response?.data?.message || 'Failed to confirm delivery');
+        console.error('Failed to confirm delivery:', error);
+    } finally {
+        confirming.value = false;
     }
 };
 

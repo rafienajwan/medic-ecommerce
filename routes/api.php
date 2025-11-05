@@ -71,6 +71,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Legacy routes
     Route::post('/checkout', [OrderController::class, 'checkout']);
     Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel']);
+    Route::post('/orders/{id}/confirm-delivery', [OrderController::class, 'confirmDelivery']); // Customer confirm delivery
 
     // Guest Book - logged-in users can delete own entries
     Route::delete('/guestbook/{id}', [GuestBookController::class, 'destroy']);

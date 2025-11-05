@@ -336,4 +336,67 @@ class OrderController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Customer confirms delivery of order
+     * This changes payment_status from 'pending' to 'paid'
+     * Vendor can then receive payment
+     */
+    public function confirmDelivery($id)
+    {
+        $order = Order::with(['items.product', 'user'])->findOrFail($id);
+
+        // Check authorization
+        if ($order->user_id !== Auth::id()) {
+            return response()->json([
+                'message' => 'Unauthorized. You can only confirm your own orders.'
+            ], 403);
+        }
+
+        // Validate order status - must be delivered
+        if ($order->status !== 'delivered') {
+            return response()->json([
+                'message' => 'Only delivered orders can be confirmed.',
+                'current_status' => $order->status
+            ], 400);
+        }
+
+        // Check if already confirmed
+        if ($order->payment_status === 'paid') {
+            return response()->json([
+                'message' => 'Order delivery already confirmed.',
+                'confirmed_at' => $order->updated_at
+            ], 400);
+        }
+
+        DB::beginTransaction();
+        try {
+            // Update payment status to paid
+            $order->update([
+                'payment_status' => 'paid',
+                'delivery_confirmed_at' => now(),
+            ]);
+
+            // Log the confirmation
+            AuditLog::log('delivery_confirmed', $order, 'Customer confirmed delivery', [
+                'order_number' => $order->order_number,
+                'confirmed_by' => Auth::user()->name,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Delivery confirmed successfully. Payment released to vendor.',
+                'order' => $order->fresh()->load(['items.product'])
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to confirm delivery: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Failed to confirm delivery',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

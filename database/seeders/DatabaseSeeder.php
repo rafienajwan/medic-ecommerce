@@ -103,40 +103,40 @@ class DatabaseSeeder extends Seeder
         // Create Regular Customers
         $customerData = [
             [
-                'name' => 'Customer 1',
-                'email' => 'customer1@example.com',
+                'name' => 'Dr. Budi Santoso',
+                'email' => 'budi.santoso@hospital.co.id',
                 'address' => 'Jl. Sudirman No. 10, Thamrin',
                 'city' => 'Jakarta',
                 'province' => 'DKI Jakarta',
                 'postal_code' => '10220',
             ],
             [
-                'name' => 'Customer 2',
-                'email' => 'customer2@example.com',
+                'name' => 'Siti Nurhaliza',
+                'email' => 'siti.nurhaliza@gmail.com',
                 'address' => 'Jl. Asia Afrika No. 25, Sumur Bandung',
                 'city' => 'Bandung',
                 'province' => 'Jawa Barat',
                 'postal_code' => '40111',
             ],
             [
-                'name' => 'Customer 3',
-                'email' => 'customer3@example.com',
+                'name' => 'Ahmad Yani',
+                'email' => 'ahmad.yani@clinic.com',
                 'address' => 'Jl. Tunjungan No. 88, Genteng',
                 'city' => 'Surabaya',
                 'province' => 'Jawa Timur',
                 'postal_code' => '60275',
             ],
             [
-                'name' => 'Customer 4',
-                'email' => 'customer4@example.com',
+                'name' => 'Dewi Lestari',
+                'email' => 'dewi.lestari@yahoo.com',
                 'address' => 'Jl. Imam Bonjol No. 5, Petisah',
                 'city' => 'Medan',
                 'province' => 'Sumatera Utara',
                 'postal_code' => '20112',
             ],
             [
-                'name' => 'Customer 5',
-                'email' => 'customer5@example.com',
+                'name' => 'Rizki Pratama',
+                'email' => 'rizki.pratama@outlook.com',
                 'address' => 'Jl. Pahlawan No. 12, Semarang Tengah',
                 'city' => 'Semarang',
                 'province' => 'Jawa Tengah',
@@ -473,9 +473,9 @@ class DatabaseSeeder extends Seeder
 
         // Approved entries
         GuestBook::create([
-            'user_id' => User::where('email', 'customer1@example.com')->first()->id,
-            'name' => 'Customer 1',
-            'email' => 'customer1@example.com',
+            'user_id' => User::where('email', 'budi.santoso@hospital.co.id')->first()->id,
+            'name' => 'Dr. Budi Santoso',
+            'email' => 'budi.santoso@hospital.co.id',
             'message' => 'Sangat puas dengan pelayanan dan kualitas produk! Pengiriman cepat dan packaging rapi. Recommended!',
             'ip_address' => '127.0.0.1',
             'is_approved' => true,
@@ -494,9 +494,9 @@ class DatabaseSeeder extends Seeder
         ]);
 
         GuestBook::create([
-            'user_id' => User::where('email', 'customer2@example.com')->first()->id,
-            'name' => 'Customer 2',
-            'email' => 'customer2@example.com',
+            'user_id' => User::where('email', 'siti.nurhaliza@gmail.com')->first()->id,
+            'name' => 'Siti Nurhaliza',
+            'email' => 'siti.nurhaliza@gmail.com',
             'message' => 'Alat medis berkualitas dengan sertifikasi lengkap. Customer service responsif. Akan order lagi!',
             'ip_address' => '127.0.0.2',
             'is_approved' => true,
@@ -614,14 +614,14 @@ class DatabaseSeeder extends Seeder
         $createOrderItem($order1->id, 'Nebulizer Compressor OneMed', 1);
         $createOrderItem($order1->id, 'Hand Sanitizer Gel 500ml', 1);
 
-        // Order 2 - Processing (Bandung customer, Prepaid BCA)
+        // Order 2 - Processing (Bandung customer, Prepaid BCA) - Payment pending confirmation
         $order2 = Order::create([
             'user_id' => $allCustomers->where('city', 'Bandung')->first()->id,
             'order_number' => $generateOrderNumber(),
             'status' => 'processing',
             'payment_method' => 'prepaid',
             'bank_type' => 'BCA',
-            'payment_status' => 'paid',
+            'payment_status' => 'pending', // Waiting for customer confirmation
             'subtotal' => 375000,
             'shipping_fee' => 12000,
             'total' => 387000,
@@ -743,14 +743,14 @@ class DatabaseSeeder extends Seeder
         $createOrderItem($order6->id, 'Kotak P3K Lengkap First Aid Kit', 2);
         $createOrderItem($order6->id, 'Tas P3K Portable Emergency Bag', 2);
 
-        // Order 7 - Processing (Bandung customer, Prepaid Visa)
+        // Order 7 - Processing (Bandung customer, Prepaid Visa) - Payment pending confirmation
         $order7 = Order::create([
             'user_id' => $allCustomers->where('city', 'Bandung')->first()->id,
             'order_number' => $generateOrderNumber(),
             'status' => 'processing',
             'payment_method' => 'prepaid',
             'bank_type' => 'Visa',
-            'payment_status' => 'paid',
+            'payment_status' => 'pending', // Waiting for customer confirmation
             'subtotal' => 1450000,
             'shipping_fee' => 0, // Free shipping
             'total' => 1450000,
@@ -815,12 +815,12 @@ class DatabaseSeeder extends Seeder
         $this->command->info('  - vendor3@medic-ecommerce.com (Jakarta Medical Store - Jakarta) / password');
         $this->command->info('  - vendor4@medic-ecommerce.com (Medan Health Equipment - Medan) / password');
         $this->command->info('  - vendor5@medic-ecommerce.com (Semarang Medical Center - Semarang) / password');
-        $this->command->info('Customers: customer1@example.com to customer5@example.com / password');
+        $this->command->info('Customers: budi.santoso@hospital.co.id, siti.nurhaliza@gmail.com, ahmad.yani@clinic.com, dewi.lestari@yahoo.com, rizki.pratama@outlook.com / password');
         $this->command->info('Products: 16 products from 5 vendors (based on actual photos in storage/app/public/products)');
         $this->command->info('Categories: 5 categories (Alat Diagnostik, Alat Terapi, Perlengkapan Medis, Obat & Perawatan, Kesehatan Ibu & Anak)');
         $this->command->info('Orders: 8 orders with various statuses and payment methods');
-        $this->command->info('  - 3 Delivered orders');
-        $this->command->info('  - 2 Processing orders');
+        $this->command->info('  - 3 Delivered orders (payment_status: paid - confirmed by customer)');
+        $this->command->info('  - 2 Processing orders (payment_status: pending - waiting customer confirmation)');
         $this->command->info('  - 1 Shipped order');
         $this->command->info('  - 1 Pending order');
         $this->command->info('  - 1 Cancelled order');

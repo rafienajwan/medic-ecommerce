@@ -334,8 +334,9 @@ const loadDashboardData = async () => {
         const allOrders = ordersResponse.data.data;
 
         // Calculate stats from actual data
+        // Revenue hanya dari order yang payment_status = 'paid' (sudah dikonfirmasi customer)
         const totalRevenue = allOrders
-            .filter(order => order.status === 'delivered' || order.status === 'processing')
+            .filter(order => order.payment_status === 'paid')
             .reduce((sum, order) => {
                 // Sum all items from this vendor
                 const vendorTotal = order.items
@@ -356,7 +357,7 @@ const loadDashboardData = async () => {
         };
     } catch (err) {
         console.error('Failed to load dashboard:', err);
-        
+
         // Fallback to zero values on error
         stats.value = {
             total_products: products.value.length,
