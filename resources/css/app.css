@@ -5,3 +5,40 @@
 [x-cloak] {
     display: none;
 }
+
+/* Product Image Fixes - Prevent Cropping */
+@layer components {
+    .product-image {
+        @apply w-full h-48 object-contain bg-white;
+    }
+
+    .product-image-large {
+        @apply w-full h-96 object-contain bg-white;
+    }
+
+    .product-thumbnail {
+        @apply w-20 h-20 object-contain bg-gray-50 rounded border;
+    }
+
+    .category-image {
+        @apply w-full h-32 object-cover bg-gray-100 rounded-t-lg;
+    }
+}
+
+/* Responsive Container */
+@layer components {
+    .container-responsive {
+        @apply w-full mx-auto px-4 sm:px-6 lg:px-8;
+    }
+}
+
+/* Responsive Grid */
+@layer utilities {
+    .grid-responsive-products {
+        @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
+    }
+
+    .grid-responsive-categories {
+        @apply grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 sm:gap-4;
+    }
+}
