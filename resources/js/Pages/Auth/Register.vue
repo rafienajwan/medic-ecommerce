@@ -13,6 +13,11 @@ const form = useForm({
     email: '',
     password: '',
     password_confirmation: '',
+    phone: '',
+    address: '',
+    city: '',
+    province: '',
+    postal_code: '',
     terms: false,
 });
 
@@ -57,6 +62,79 @@ const submit = () => {
                     autocomplete="username"
                 />
                 <InputError class="mt-2" :message="form.errors.email" />
+            </div>
+
+            <div class="mt-4">
+                <InputLabel for="phone" value="Phone Number" />
+                <TextInput
+                    id="phone"
+                    v-model="form.phone"
+                    type="tel"
+                    class="mt-1 block w-full"
+                    required
+                    autocomplete="tel"
+                    placeholder="08123456789"
+                />
+                <InputError class="mt-2" :message="form.errors.phone" />
+            </div>
+
+            <div class="mt-4">
+                <InputLabel for="address" value="Address" />
+                <textarea
+                    id="address"
+                    v-model="form.address"
+                    class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full"
+                    rows="2"
+                    required
+                    autocomplete="street-address"
+                    placeholder="Jl. Contoh No. 123, Kelurahan"
+                ></textarea>
+                <InputError class="mt-2" :message="form.errors.address" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mt-4">
+                <div>
+                    <InputLabel for="city" value="City" />
+                    <TextInput
+                        id="city"
+                        v-model="form.city"
+                        type="text"
+                        class="mt-1 block w-full"
+                        required
+                        autocomplete="address-level2"
+                        placeholder="Jakarta"
+                    />
+                    <InputError class="mt-2" :message="form.errors.city" />
+                </div>
+
+                <div>
+                    <InputLabel for="province" value="Province" />
+                    <TextInput
+                        id="province"
+                        v-model="form.province"
+                        type="text"
+                        class="mt-1 block w-full"
+                        required
+                        autocomplete="address-level1"
+                        placeholder="DKI Jakarta"
+                    />
+                    <InputError class="mt-2" :message="form.errors.province" />
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <InputLabel for="postal_code" value="Postal Code" />
+                <TextInput
+                    id="postal_code"
+                    v-model="form.postal_code"
+                    type="text"
+                    class="mt-1 block w-full"
+                    required
+                    autocomplete="postal-code"
+                    placeholder="12345"
+                    maxlength="5"
+                />
+                <InputError class="mt-2" :message="form.errors.postal_code" />
             </div>
 
             <div class="mt-4">
