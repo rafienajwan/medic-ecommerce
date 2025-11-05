@@ -35,9 +35,24 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+
+        // Load vendor relationship if user is authenticated
+        if ($user) {
+            $user->load('vendor');
+        }
+
         return [
             ...parent::share($request),
-            //
+            'auth' => [
+                'user' => $user,
+            ],
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+                'message' => fn () => $request->session()->get('message'),
+            ],
+            'csrf_token' => csrf_token(),
         ];
     }
 }

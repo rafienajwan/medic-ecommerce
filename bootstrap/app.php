@@ -17,7 +17,21 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
-        //
+        // CRITICAL: Add Sanctum's stateful middleware to API routes
+        // This allows Sanctum to recognize session-based authentication for SPA
+        $middleware->api(prepend: [
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        ]);
+
+        // NOTE: SessionExpiry middleware REMOVED from web group
+        // Let Jetstream handle web session management natively
+
+        // Alias for middleware
+        $middleware->alias([
+            'session.expiry' => \App\Http\Middleware\SessionExpiry::class,
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'vendor.approved' => \App\Http\Middleware\EnsureVendorApproved::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
