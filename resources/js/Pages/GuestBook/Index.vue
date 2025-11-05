@@ -4,28 +4,31 @@
             <h1 class="text-3xl font-bold text-gray-900 mb-6">Guest Book</h1>
             <p class="text-gray-600 mb-8">Share your experience with us!</p>
 
-            <!-- Write Testimonial Form (Authenticated Users) -->
-            <div v-if="$page.props.auth.user" class="bg-white rounded-lg shadow p-6 mb-8">
+            <!-- Write Testimonial Form (For All Users) -->
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
                 <h2 class="text-xl font-semibold mb-4">Write a Testimonial</h2>
                 <form @submit.prevent="submitTestimonial">
+                    <!-- Name Field (disabled if logged in) -->
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
                         <input
                             v-model="form.name"
                             type="text"
-                            required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Your name"
+                            :required="!$page.props.auth.user"
+                            :disabled="$page.props.auth.user"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+                            :placeholder="$page.props.auth.user ? 'Logged in as ' + $page.props.auth.user.name : 'Your name (optional for guests)'"
                         />
                     </div>
+                    <!-- Email Field (disabled if logged in) -->
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email (Optional)</label>
                         <input
                             v-model="form.email"
                             type="email"
-                            required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="your.email@example.com"
+                            :disabled="$page.props.auth.user"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+                            :placeholder="$page.props.auth.user ? $page.props.auth.user.email : 'your.email@example.com (optional)'"
                         />
                     </div>
                     <div class="mb-4">
@@ -46,17 +49,11 @@
                         {{ submitting ? 'Submitting...' : 'Submit Testimonial' }}
                     </button>
                     <p class="text-sm text-gray-500 mt-2">
-                        Your testimonial will be reviewed before appearing publicly.
+                        {{ $page.props.auth.user
+                            ? 'Your testimonial will be reviewed before appearing publicly.'
+                            : 'Guest submissions will be shown as "Anonymous" after approval.' }}
                     </p>
                 </form>
-            </div>
-
-            <!-- Login Prompt for Guests -->
-            <div v-else class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-                <p class="text-blue-800">
-                    <Link href="/login" class="font-semibold underline">Login</Link>
-                    to share your testimonial with us!
-                </p>
             </div>
 
             <!-- Approved Testimonials -->
@@ -71,11 +68,13 @@
                     >
                         <div class="flex items-start justify-between mb-3">
                             <div>
-                                <h3 class="font-semibold text-lg text-gray-900">{{ entry.name }}</h3>
+                                <h3 class="font-semibold text-lg text-gray-900">
+                                    {{ entry.user_id ? entry.name : 'Anonymous Guest' }}
+                                </h3>
                                 <p class="text-sm text-gray-500">{{ formatDate(entry.created_at) }}</p>
                             </div>
-                            <span class="px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-                                Verified
+                            <span :class="entry.user_id ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'" class="px-3 py-1 text-xs rounded-full">
+                                {{ entry.user_id ? 'Verified User' : 'Guest' }}
                             </span>
                         </div>
                         <p class="text-gray-700 leading-relaxed">{{ entry.message }}</p>
