@@ -229,9 +229,9 @@ defineProps({
                     </div>
                 </div>
                 <div class="mt-8 pt-8 border-t border-gray-200 text-center text-sm text-gray-600">
-                    <p>&copy; 2025 Medic E-Commerce. All rights reserved.</p>
-                    <p class="mt-2 text-xs">
-                        <span class="text-blue-600 font-semibold">✨ BNSP Project</span> - Auto-logout 60 detik | PDF Invoice | Multiple Payment Methods
+                    <p>&copy; 2025 Medical Equipment E-Commerce. All rights reserved.</p>
+                    <p class="mt-2 text-xs text-gray-500">
+                        Secure Shopping | PDF Invoices | Multiple Payment Methods
                     </p>
                 </div>
             </div>
