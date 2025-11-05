@@ -12,7 +12,7 @@ Route::get('/', function () {
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
     ]);
-});
+})->name('welcome');
 
 // Public Products Page
 Route::get('/products', function () {

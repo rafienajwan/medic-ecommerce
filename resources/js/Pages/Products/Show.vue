@@ -34,6 +34,19 @@
         </div>
 
         <div class="container-responsive py-4 sm:py-6 lg:py-8">
+            <!-- Back Button -->
+            <div class="mb-4">
+                <button
+                    @click="$inertia.visit(route('products.index'))"
+                    class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
+                >
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Back to Products
+                </button>
+            </div>
+
             <!-- Product Details - Responsive -->
             <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-6 sm:mb-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8">

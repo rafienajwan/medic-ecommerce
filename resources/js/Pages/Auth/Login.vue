@@ -44,6 +44,16 @@ const submit = () => {
             <AuthenticationCardLogo />
         </template>
 
+        <!-- Back to Home Button -->
+        <div class="mb-4">
+            <Link :href="route('welcome')" class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Home
+            </Link>
+        </div>
+
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
             {{ status }}
         </div>
@@ -109,6 +119,14 @@ const submit = () => {
                 <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Log in
                 </PrimaryButton>
+            </div>
+
+            <!-- Register Link -->
+            <div class="text-center mt-4 pt-4 border-t border-gray-200">
+                <span class="text-sm text-gray-600">Don't have an account?</span>
+                <Link :href="route('register')" class="ms-2 text-sm text-indigo-600 hover:text-indigo-900 font-semibold">
+                    Register here
+                </Link>
             </div>
         </form>
     </AuthenticationCard>
