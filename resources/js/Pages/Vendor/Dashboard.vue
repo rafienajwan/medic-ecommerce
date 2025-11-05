@@ -355,6 +355,14 @@ const viewProducts = () => {
     router.visit('/vendor/products');
 };
 
+const viewOrders = () => {
+    router.visit('/vendor/orders');
+};
+
+const editProduct = (productId) => {
+    router.visit(`/vendor/products/${productId}/edit`);
+};
+
 const toggleProductStatus = async (productId) => {
     const product = products.value.find(p => p.id === productId);
     if (!product) return;
