@@ -22,7 +22,10 @@ class AdminMiddleware
             ], 401);
         }
 
-        if (!Auth::user()->isAdmin()) {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        
+        if (!$user->isAdmin()) {
             return response()->json([
                 'message' => 'Unauthorized. Admin access required.'
             ], 403);

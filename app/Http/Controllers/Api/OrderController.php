@@ -11,6 +11,7 @@ use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -145,7 +146,7 @@ class OrderController extends Controller
                 $this->generateAndSendInvoice($order);
             } catch (\Exception $e) {
                 // Log error but don't fail the order
-                \Log::error('Failed to generate invoice: ' . $e->getMessage());
+                Log::error('Failed to generate invoice: ' . $e->getMessage());
             }
 
             return response()->json([
@@ -265,7 +266,7 @@ class OrderController extends Controller
 
             AuditLog::log('invoice_sent', $order, 'Invoice sent to customer email');
         } catch (\Exception $e) {
-            \Log::error('Failed to send invoice email: ' . $e->getMessage());
+            Log::error('Failed to send invoice email: ' . $e->getMessage());
         }
     }
 

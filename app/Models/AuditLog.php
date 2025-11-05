@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class AuditLog extends Model
 {
@@ -46,7 +47,7 @@ class AuditLog extends Model
     public static function log(string $action, $model = null, ?string $description = null, array $meta = []): void
     {
         static::create([
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'action' => $action,
             'model_type' => $model ? get_class($model) : null,
             'model_id' => $model ? $model->id : null,

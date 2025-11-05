@@ -2,6 +2,7 @@
 
 use App\Models\Product;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -100,7 +101,8 @@ Route::middleware([
     // Vendor Dashboard - Only for approved vendors
     Route::middleware(['vendor.approved'])->group(function () {
         Route::get('/vendor/dashboard', function () {
-            $user = auth()->user();
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
             $vendor = $user->vendor;
 
             return Inertia::render('Vendor/Dashboard', [

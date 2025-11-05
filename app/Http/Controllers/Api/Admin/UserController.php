@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -106,7 +107,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         // Prevent deleting own account
-        if ($user->id === auth()->id()) {
+        if (Auth::check() && $user->id === Auth::id()) {
             return response()->json([
                 'message' => 'You cannot delete your own account'
             ], 400);

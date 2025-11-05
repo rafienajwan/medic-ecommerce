@@ -7,8 +7,11 @@ use App\Models\OrderItem;
 use App\Models\Cart;
 use App\Models\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
 
@@ -179,7 +182,7 @@ class OrderController extends Controller
         $path = 'invoices/' . $filename;
 
         // Save to storage
-        \Storage::disk('public')->put($path, $pdf->output());
+        Storage::disk('public')->put($path, $pdf->output());
 
         return $path;
     }
@@ -198,24 +201,32 @@ class OrderController extends Controller
                     ]);
             });
         } catch (\Exception $e) {
-            \Log::error('Failed to send invoice email: ' . $e->getMessage());
+            Log::error('Failed to send invoice email: ' . $e->getMessage());
         }
     }
 
     public function downloadInvoice($id)
     {
+        if (!Auth::check()) {
+            abort(401);
+        }
+        
         $order = Order::with(['items.product', 'user'])
-            ->where('user_id', auth()->id())
+            ->where('user_id', Auth::id())
             ->findOrFail($id);
 
-        if ($order->invoice_path && \Storage::disk('public')->exists($order->invoice_path)) {
-            return \Storage::disk('public')->download($order->invoice_path);
+        if ($order->invoice_path && Storage::disk('public')->exists($order->invoice_path)) {
+            /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
+            $disk = Storage::disk('public');
+            return $disk->download($order->invoice_path);
         }
 
         // Regenerate if not exists
         $invoicePath = $this->generateInvoice($order);
         $order->update(['invoice_path' => $invoicePath]);
 
-        return \Storage::disk('public')->download($invoicePath);
+        /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
+        $disk = Storage::disk('public');
+        return $disk->download($invoicePath);
     }
 }
