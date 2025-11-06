@@ -6,6 +6,8 @@ Platform marketplace multi-vendor untuk peralatan dan perlengkapan medis.
 [![Vue.js](https://img.shields.io/badge/Vue.js-3-green)](https://vuejs.org)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)](https://postgresql.org)
 
+> **⚠️ SECURITY NOTICE**: This project contains a `.env` file with sensitive credentials. Never commit `.env` to git. Use `.env.example` for templates only.
+
 ---
 
 ## 📋 Daftar Isi
@@ -105,7 +107,9 @@ Vendor: vendor@example.com / password
 
 ---
 
-## � Konfigurasi Email
+## 📧 Konfigurasi Email
+
+> **⚠️ SECURITY WARNING**: Never commit your `.env` file or expose real credentials in code/docs. Always use `.env.example` with placeholder values.
 
 ### Setup Gmail SMTP
 
@@ -116,13 +120,13 @@ Vendor: vendor@example.com / password
    - Generate password untuk "Mail" → "Other device"
    - Copy App Password (16 karakter)
 
-3. **Update .env**:
+3. **Update .env** (gunakan kredensial ASLI Anda):
 ```env
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
-MAIL_USERNAME=your-email@gmail.com
-MAIL_PASSWORD=your-app-password  # 16 karakter dari step 2
+MAIL_USERNAME=your-actual-email@gmail.com
+MAIL_PASSWORD=xxxxxxxxxxxxxxxx  # 16 char App Password dari step 2
 MAIL_ENCRYPTION=tls
 MAIL_FROM_ADDRESS="noreply@medic-ecommerce.com"
 MAIL_FROM_NAME="Medic E-Commerce"
@@ -132,8 +136,13 @@ QUEUE_CONNECTION=sync  # Email langsung terkirim
 4. **Test Email**:
 ```bash
 php artisan tinker
-Mail::raw('Test', function($m) { $m->to('test@example.com')->subject('Test'); });
+Mail::raw('Test', function($m) { $m->to('your-test@example.com')->subject('Test'); });
 ```
+
+> **🔐 Important**: If you previously committed real credentials, rotate them immediately:
+> 1. Revoke the Gmail App Password at https://myaccount.google.com/apppasswords
+> 2. Generate a new App Password
+> 3. Update your `.env` with the new password
 
 ### Fitur Email yang Aktif
 - ✅ **Invoice Email**: Auto-send setelah checkout dengan PDF attachment
@@ -422,9 +431,11 @@ php artisan migrate:fresh --seed
 ```
 
 ### Email Not Sending
-- Pastikan MAIL_PASSWORD adalah App Password (bukan password Gmail biasa)
+- Pastikan `MAIL_PASSWORD` adalah App Password (bukan password Gmail biasa)
+- Pastikan tidak ada spasi di App Password
 - Cek log: `storage/logs/laravel.log`
 - Test manual: `php artisan tinker`
+- **Jika kredensial pernah ter-commit ke git**: Rotate segera di https://myaccount.google.com/apppasswords
 
 ---
 
