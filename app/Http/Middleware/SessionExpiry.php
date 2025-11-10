@@ -20,6 +20,11 @@ class SessionExpiry
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Skip session expiry check for logout route
+        if ($request->is('logout') || $request->routeIs('logout')) {
+            return $next($request);
+        }
+
         if (!Auth::check()) {
             return $next($request);
         }
