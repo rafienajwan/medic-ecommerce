@@ -13,7 +13,7 @@ class SessionExpiry
     /**
      * Handle an incoming request.
      *
-     * Session expiry: 30 minutes (1800 seconds) without activity
+     * Session expiry: 1 minute (60 seconds) without activity
      * Implements sliding window - session extends on each request
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
@@ -32,7 +32,7 @@ class SessionExpiry
         }
 
         $sessionId = session()->getId();
-        $idleTimeout = 1800; // 1800 seconds = 30 minutes
+        $idleTimeout = 60; // 60 seconds = 1 minute
 
         // Get session from database
         $session = DB::table('sessions')
@@ -44,7 +44,7 @@ class SessionExpiry
             $currentTime = time();
             $idleTime = $currentTime - $lastActivity;
 
-            // If idle time exceeds 30 minutes, logout
+            // If idle time exceeds 1 minute, logout
             if ($idleTime > $idleTimeout) {
                 Auth::logout();
                 $request->session()->invalidate();
@@ -52,12 +52,12 @@ class SessionExpiry
 
                 if ($request->expectsJson()) {
                     return response()->json([
-                        'message' => 'Session expired due to inactivity (30 minutes)',
+                        'message' => 'Session expired due to inactivity (1 minute)',
                         'expired' => true
                     ], 401);
                 }
 
-                return redirect()->route('login')->with('error', 'Your session has expired due to inactivity (30 minutes).');
+                return redirect()->route('login')->with('error', 'Your session has expired due to inactivity (1 minute).');
             }
 
             // Update last_activity for sliding window (auto-updated by Laravel)

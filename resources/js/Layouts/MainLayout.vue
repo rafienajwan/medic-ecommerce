@@ -165,7 +165,7 @@ const isAuthenticated = computed(() => !!page.props.auth?.user);
 
 // Initialize idle detector ONLY for authenticated users
 let idleTime = ref(0);
-let maxIdleTime = ref(1800); // 30 minutes idle timeout
+let maxIdleTime = ref(60); // 1 minute idle timeout
 let idleDetectorInstance = null;
 
 // Initialize idle detector ONLY for authenticated users
@@ -201,7 +201,7 @@ onMounted(() => {
 
     // Initialize idle detector ONLY if user is authenticated
     if (isAuthenticated.value && idleDetectorInstance && typeof idleDetectorInstance.init === 'function') {
-        console.log('MainLayout: Initializing idle detector (30 min timeout)');
+        console.log('MainLayout: Initializing idle detector (1 min timeout)');
         idleDetectorInstance.init();
     } else {
         console.log('MainLayout: Skipping idle detector initialization - user not authenticated');
