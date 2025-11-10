@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import MainLayout from '@/Layouts/MainLayout.vue';
 import axios from 'axios';
 
@@ -75,6 +75,10 @@ const submitApplication = async () => {
     } finally {
         form.processing = false;
     }
+};
+
+const goBack = () => {
+    router.visit('/dashboard');
 };
 
 onMounted(() => {
@@ -285,9 +289,13 @@ onMounted(() => {
 
                             <!-- Submit Button -->
                             <div class="flex justify-between items-center pt-6 border-t">
-                                <Link href="/dashboard" class="text-gray-600 hover:text-gray-900">
+                                <button
+                                    type="button"
+                                    @click="goBack"
+                                    class="text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200"
+                                >
                                     ← Kembali
-                                </Link>
+                                </button>
                                 <button
                                     type="submit"
                                     :disabled="form.processing"
@@ -436,9 +444,13 @@ onMounted(() => {
 
                         <!-- Submit Button -->
                         <div class="flex justify-between items-center pt-6 border-t">
-                            <Link href="/dashboard" class="text-gray-600 hover:text-gray-900">
+                            <button
+                                type="button"
+                                @click="goBack"
+                                class="text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200"
+                            >
                                 ← Kembali
-                            </Link>
+                            </button>
                             <button
                                 type="submit"
                                 :disabled="form.processing"
