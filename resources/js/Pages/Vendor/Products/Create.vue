@@ -147,7 +147,7 @@
                     <div class="flex flex-col sm:flex-row gap-3 justify-end">
                         <button
                             type="button"
-                            @click="$inertia.visit('/vendor/dashboard')"
+                            @click="router.visit('/vendor/dashboard')"
                             class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium"
                         >
                             Cancel
