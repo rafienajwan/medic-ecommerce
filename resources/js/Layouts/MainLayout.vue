@@ -168,12 +168,15 @@ let idleTime = ref(0);
 let maxIdleTime = ref(1800); // 30 minutes idle timeout
 let idleDetectorInstance = null;
 
-// TEMPORARY: DISABLE idle detector to test profile/cart functionality
-// if (isAuthenticated.value) {
-//     idleDetectorInstance = useIdleDetector();
-//     idleTime = idleDetectorInstance.idleTime;
-//     maxIdleTime = idleDetectorInstance.maxIdleTime;
-// }
+// Initialize idle detector ONLY for authenticated users
+if (isAuthenticated.value) {
+    console.log('MainLayout: User is authenticated, preparing idle detector');
+    idleDetectorInstance = useIdleDetector();
+    idleTime = idleDetectorInstance.idleTime;
+    maxIdleTime = idleDetectorInstance.maxIdleTime;
+} else {
+    console.log('MainLayout: User not authenticated, skipping idle detector');
+}
 
 const logout = () => {
     // Cleanup idle detector before logout
@@ -198,8 +201,10 @@ onMounted(() => {
 
     // Initialize idle detector ONLY if user is authenticated
     if (isAuthenticated.value && idleDetectorInstance && typeof idleDetectorInstance.init === 'function') {
-        console.log('User authenticated - initializing idle detector');
+        console.log('MainLayout: Initializing idle detector (30 min timeout)');
         idleDetectorInstance.init();
+    } else {
+        console.log('MainLayout: Skipping idle detector initialization - user not authenticated');
     }
 });
 </script>

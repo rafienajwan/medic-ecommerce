@@ -12,10 +12,10 @@ export function useIdleDetector() {
     }
 
     const idleTime = ref(0);
-    const maxIdleTime = 60; // 60 seconds idle timeout
-    const heartbeatInterval = 30; // Ping every 30 seconds
+    const maxIdleTime = 1800; // 1800 seconds = 30 minutes idle timeout
+    const heartbeatInterval = 300; // Ping every 5 minutes (300 seconds)
     const showWarning = ref(false);
-    const warningTime = 40; // Show warning after 40 seconds (20s before timeout)
+    const warningTime = 1680; // Show warning after 28 minutes (120s/2min before timeout)
 
     let idleTimer = null;
     let heartbeatTimer = null;
@@ -41,14 +41,14 @@ export function useIdleDetector() {
         if (idleTimer) clearInterval(idleTimer);
         if (heartbeatTimer) clearInterval(heartbeatTimer);
 
-        console.error('🔒 Session expired after 60 seconds of inactivity');
+        console.error('🔒 Session expired after 30 minutes of inactivity');
 
         // Redirect to login with timeout message
         router.visit('/login', {
             method: 'get',
             data: {
                 timeout: true,
-                message: 'Your session has expired due to inactivity (60 seconds).'
+                message: 'Your session has expired due to inactivity (30 minutes).'
             },
             onSuccess: () => {
                 sessionStorage.clear();
@@ -62,13 +62,13 @@ export function useIdleDetector() {
 
         idleTime.value = timeSinceLastActivity;
 
-        // Show warning at 40 seconds (20s before logout)
+        // Show warning at 28 minutes (2 minutes before logout)
         if (timeSinceLastActivity >= warningTime && !showWarning.value) {
             showWarning.value = true;
-            console.warn('⚠️ Session will expire in 20 seconds due to inactivity');
+            console.warn('⚠️ Session will expire in 2 minutes due to inactivity');
         }
 
-        // Logout at 60 seconds
+        // Logout at 30 minutes
         if (timeSinceLastActivity >= maxIdleTime) {
             handleSessionExpired();
         }
@@ -155,7 +155,7 @@ export function useIdleDetector() {
         }
     };
 
-    console.log('Creating NEW idle detector instance (60s timeout, NOT initialized yet)');
+    console.log('Creating NEW idle detector instance (30 min timeout, NOT initialized yet)');
 
     return globalInstance;
 }

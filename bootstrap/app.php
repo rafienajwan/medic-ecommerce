@@ -15,7 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
-            \App\Http\Middleware\SessionExpiry::class, // Auto-logout after 60s idle
+            \App\Http\Middleware\SessionExpiry::class, // Auto-logout after 30 min (1800s) idle
         ]);
 
         // CRITICAL: Add Sanctum's stateful middleware to API routes

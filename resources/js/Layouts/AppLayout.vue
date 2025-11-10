@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import ApplicationMark from '@/Components/ApplicationMark.vue';
 import Banner from '@/Components/Banner.vue';
 import Dropdown from '@/Components/Dropdown.vue';
@@ -15,20 +15,30 @@ defineProps({
 });
 
 const showingNavigationDropdown = ref(false);
+const page = usePage();
 
-// Initialize idle detector
+// Check if user is authenticated
+const isAuthenticated = computed(() => !!page.props.auth?.user);
+
+// Initialize idle detector ONLY for authenticated users
 const idleDetector = useIdleDetector();
 const timeRemaining = computed(() => Math.max(0, idleDetector.maxIdleTime - idleDetector.idleTime.value));
 
 onMounted(() => {
-    // Start idle detection
-    idleDetector.init();
-    console.log('✅ Idle detector initialized in AppLayout (60s timeout)');
+    // Start idle detection ONLY if user is authenticated
+    if (isAuthenticated.value) {
+        idleDetector.init();
+        console.log('✅ Idle detector initialized in AppLayout (30 min timeout)');
+    } else {
+        console.log('⏭️ Skipping idle detector - user not authenticated');
+    }
 });
 
 onUnmounted(() => {
     // Cleanup on unmount
-    idleDetector.cleanup();
+    if (isAuthenticated.value) {
+        idleDetector.cleanup();
+    }
 });
 
 const handleStayActive = () => {

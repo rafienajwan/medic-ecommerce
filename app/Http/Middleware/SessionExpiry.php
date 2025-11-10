@@ -13,15 +13,17 @@ class SessionExpiry
     /**
      * Handle an incoming request.
      *
-     * Session expiry: 60 seconds without activity
+     * Session expiry: 30 minutes (1800 seconds) without activity
      * Implements sliding window - session extends on each request
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Skip session expiry check for logout route
-        if ($request->is('logout') || $request->routeIs('logout')) {
+        // Skip session expiry check for logout and login routes
+        if ($request->is('logout') || $request->routeIs('logout') ||
+            $request->is('login') || $request->routeIs('login') ||
+            $request->is('register') || $request->routeIs('register')) {
             return $next($request);
         }
 
@@ -30,7 +32,7 @@ class SessionExpiry
         }
 
         $sessionId = session()->getId();
-        $idleTimeout = 60; // 60 seconds
+        $idleTimeout = 1800; // 1800 seconds = 30 minutes
 
         // Get session from database
         $session = DB::table('sessions')
@@ -42,7 +44,7 @@ class SessionExpiry
             $currentTime = time();
             $idleTime = $currentTime - $lastActivity;
 
-            // If idle time exceeds 60 seconds, logout
+            // If idle time exceeds 30 minutes, logout
             if ($idleTime > $idleTimeout) {
                 Auth::logout();
                 $request->session()->invalidate();
@@ -50,12 +52,12 @@ class SessionExpiry
 
                 if ($request->expectsJson()) {
                     return response()->json([
-                        'message' => 'Session expired due to inactivity',
+                        'message' => 'Session expired due to inactivity (30 minutes)',
                         'expired' => true
                     ], 401);
                 }
 
-                return redirect()->route('login')->with('error', 'Your session has expired due to inactivity.');
+                return redirect()->route('login')->with('error', 'Your session has expired due to inactivity (30 minutes).');
             }
 
             // Update last_activity for sliding window (auto-updated by Laravel)
