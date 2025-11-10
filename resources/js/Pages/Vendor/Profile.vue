@@ -70,6 +70,50 @@
                         <p v-if="errors.business_address" class="text-red-500 text-sm mt-1">{{ errors.business_address }}</p>
                     </div>
 
+                    <!-- City & Province -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Business City
+                            </label>
+                            <input
+                                v-model="form.business_city"
+                                type="text"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="Jakarta"
+                            />
+                            <p v-if="errors.business_city" class="text-red-500 text-sm mt-1">{{ errors.business_city }}</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Business Province
+                            </label>
+                            <input
+                                v-model="form.business_province"
+                                type="text"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="DKI Jakarta"
+                            />
+                            <p v-if="errors.business_province" class="text-red-500 text-sm mt-1">{{ errors.business_province }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Postal Code -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Postal Code
+                        </label>
+                        <input
+                            v-model="form.business_postal_code"
+                            type="text"
+                            maxlength="5"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="12345"
+                        />
+                        <p v-if="errors.business_postal_code" class="text-red-500 text-sm mt-1">{{ errors.business_postal_code }}</p>
+                    </div>
+
                     <!-- Contact Info -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
                         <div>
@@ -187,6 +231,9 @@ const form = ref({
     business_type: 'Toko',
     description: '',
     business_address: '',
+    business_city: '',
+    business_province: '',
+    business_postal_code: '',
     business_phone: '',
     business_email: '',
     tax_id: '',
@@ -203,6 +250,9 @@ const loadVendorData = () => {
             business_type: vendor.value.business_type || 'Toko',
             description: vendor.value.description || '',
             business_address: vendor.value.business_address || '',
+            business_city: vendor.value.business_city || '',
+            business_province: vendor.value.business_province || '',
+            business_postal_code: vendor.value.business_postal_code || '',
             business_phone: vendor.value.business_phone || '',
             business_email: vendor.value.business_email || '',
             tax_id: vendor.value.tax_id || '',

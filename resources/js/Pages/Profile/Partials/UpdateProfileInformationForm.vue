@@ -17,6 +17,11 @@ const form = useForm({
     _method: 'PUT',
     name: props.user.name,
     email: props.user.email,
+    phone: props.user.phone || '',
+    address: props.user.address || '',
+    city: props.user.city || '',
+    province: props.user.province || '',
+    postal_code: props.user.postal_code || '',
     photo: null,
 });
 
@@ -174,6 +179,79 @@ const clearPhotoFileInput = () => {
                         A new verification link has been sent to your email address.
                     </div>
                 </div>
+            </div>
+
+            <!-- Phone -->
+            <div class="col-span-6 sm:col-span-4">
+                <InputLabel for="phone" value="Phone Number" />
+                <TextInput
+                    id="phone"
+                    v-model="form.phone"
+                    type="tel"
+                    class="mt-1 block w-full"
+                    autocomplete="tel"
+                    placeholder="08123456789"
+                />
+                <InputError :message="form.errors.phone" class="mt-2" />
+            </div>
+
+            <!-- Address -->
+            <div class="col-span-6 sm:col-span-4">
+                <InputLabel for="address" value="Address" />
+                <textarea
+                    id="address"
+                    v-model="form.address"
+                    class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full"
+                    rows="2"
+                    autocomplete="street-address"
+                    placeholder="Jl. Contoh No. 123"
+                ></textarea>
+                <InputError :message="form.errors.address" class="mt-2" />
+            </div>
+
+            <!-- City & Province -->
+            <div class="col-span-6 sm:col-span-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <InputLabel for="city" value="City" />
+                        <TextInput
+                            id="city"
+                            v-model="form.city"
+                            type="text"
+                            class="mt-1 block w-full"
+                            autocomplete="address-level2"
+                            placeholder="Jakarta"
+                        />
+                        <InputError :message="form.errors.city" class="mt-2" />
+                    </div>
+                    <div>
+                        <InputLabel for="province" value="Province" />
+                        <TextInput
+                            id="province"
+                            v-model="form.province"
+                            type="text"
+                            class="mt-1 block w-full"
+                            autocomplete="address-level1"
+                            placeholder="DKI Jakarta"
+                        />
+                        <InputError :message="form.errors.province" class="mt-2" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Postal Code -->
+            <div class="col-span-6 sm:col-span-4">
+                <InputLabel for="postal_code" value="Postal Code" />
+                <TextInput
+                    id="postal_code"
+                    v-model="form.postal_code"
+                    type="text"
+                    class="mt-1 block w-full"
+                    maxlength="5"
+                    autocomplete="postal-code"
+                    placeholder="12345"
+                />
+                <InputError :message="form.errors.postal_code" class="mt-2" />
             </div>
         </template>
 
