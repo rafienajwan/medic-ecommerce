@@ -32,10 +32,17 @@ const approveVendor = async (vendorId) => {
     if (!confirm('Yakin ingin menyetujui vendor ini?')) return;
 
     try {
-        await axios.post(`/api/admin/vendors/${vendorId}/approve`);
+        const response = await axios.post(`/api/admin/vendors/${vendorId}/approve`);
+        alert(response.data.message || 'Vendor berhasil disetujui!');
         await fetchVendors();
     } catch (error) {
-        console.error(error.response?.data?.message || 'Gagal menyetujui vendor');
+        console.error('Error approving vendor:', error);
+        if (error.response?.status === 419) {
+            alert('Session expired. Halaman akan di-refresh.');
+            window.location.reload();
+        } else {
+            alert(error.response?.data?.message || 'Gagal menyetujui vendor. Silakan coba lagi.');
+        }
     }
 };
 
@@ -60,13 +67,20 @@ const submitReject = async () => {
     }
 
     try {
-        await axios.post(`/api/admin/vendors/${selectedVendor.value.id}/reject`, {
+        const response = await axios.post(`/api/admin/vendors/${selectedVendor.value.id}/reject`, {
             reason: rejectReason.value
         });
+        alert(response.data.message || 'Vendor berhasil ditolak!');
         closeRejectModal();
         await fetchVendors();
     } catch (error) {
-        rejectError.value = error.response?.data?.message || 'Gagal menolak vendor';
+        console.error('Error rejecting vendor:', error);
+        if (error.response?.status === 419) {
+            rejectError.value = 'Session expired. Halaman akan di-refresh.';
+            setTimeout(() => window.location.reload(), 2000);
+        } else {
+            rejectError.value = error.response?.data?.message || 'Gagal menolak vendor. Silakan coba lagi.';
+        }
     }
 };
 
