@@ -31,9 +31,6 @@ Route::get('/products', function () {
         })
         ->paginate(12);
 
-    // Debug: Log jumlah produk
-    \Log::info('Products count: ' . $products->total());
-
     return Inertia::render('Products/Index', [
         'products' => $products,
     ]);
