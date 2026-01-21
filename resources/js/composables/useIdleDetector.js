@@ -12,10 +12,10 @@ export function useIdleDetector() {
     }
 
     const idleTime = ref(0);
-    const maxIdleTime = 1800; // 30 minutes = 1800 seconds idle timeout
-    const heartbeatInterval = 60; // Ping every 60 seconds
+    const maxIdleTime = 3600; // 60 minutes = 3600 seconds idle timeout (increased from 30 min)
+    const heartbeatInterval = 120; // Ping every 120 seconds (reduced frequency)
     const showWarning = ref(false);
-    const warningTime = 1740; // Show warning after 29 minutes (60s before timeout)
+    const warningTime = 3540; // Show warning after 59 minutes (60s before timeout)
 
     let idleTimer = null;
     let heartbeatTimer = null;
@@ -41,14 +41,14 @@ export function useIdleDetector() {
         if (idleTimer) clearInterval(idleTimer);
         if (heartbeatTimer) clearInterval(heartbeatTimer);
 
-        console.error('🔒 Session expired after 30 minutes of inactivity');
+        console.error('🔒 Session expired after 60 minutes of inactivity');
 
         // Redirect to login with timeout message
         router.visit('/login', {
             method: 'get',
             data: {
                 timeout: true,
-                message: 'Your session has expired due to inactivity (30 minutes).'
+                message: 'Your session has expired due to inactivity (60 minutes).'
             },
             onSuccess: () => {
                 sessionStorage.clear();
@@ -62,13 +62,13 @@ export function useIdleDetector() {
 
         idleTime.value = timeSinceLastActivity;
 
-        // Show warning at 29 minutes (1 minute before logout)
+        // Show warning at 59 minutes (1 minute before logout)
         if (timeSinceLastActivity >= warningTime && !showWarning.value) {
             showWarning.value = true;
             console.warn('⚠️ Session will expire in 1 minute due to inactivity');
         }
 
-        // Logout at 30 minutes
+        // Logout at 60 minutes
         if (timeSinceLastActivity >= maxIdleTime) {
             handleSessionExpired();
         }

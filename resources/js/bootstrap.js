@@ -43,10 +43,11 @@ window.axios.interceptors.response.use(
     response => response,
     error => {
         if (error.response?.status === 419) {
-            // CSRF token mismatch - reload page to get fresh token
-            console.error('CSRF token mismatch - reloading page');
-            alert('Session expired. Please try again.');
-            window.location.reload();
+            // CSRF token mismatch - only reload if not on login page
+            if (!window.location.pathname.includes('/login')) {
+                console.error('CSRF token mismatch - reloading page');
+                window.location.reload();
+            }
         }
         return Promise.reject(error);
     }

@@ -20,12 +20,13 @@ class SessionExpiry
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Skip session expiry check for logout, login, register, and dashboard routes
+        // Skip session expiry check for login/logout/register routes and public pages
         if ($request->is('logout') || $request->routeIs('logout') ||
             $request->is('login') || $request->routeIs('login') ||
             $request->is('register') || $request->routeIs('register') ||
-            $request->is('dashboard') || $request->routeIs('dashboard') ||
-            $request->is('products') || $request->is('products/*')) {
+            $request->is('two-factor-challenge') || $request->routeIs('two-factor.*') ||
+            $request->is('/') || $request->is('products') || $request->is('products/*') ||
+            $request->is('guest-book') || $request->is('guest-book/*')) {
             return $next($request);
         }
 
@@ -33,9 +34,9 @@ class SessionExpiry
             return $next($request);
         }
 
-        // Check if user just logged in (within last 10 seconds)
+        // Check if user just logged in (within last 60 seconds) - give grace period
         $lastLogin = session('last_login_time');
-        if ($lastLogin && (time() - $lastLogin) < 10) {
+        if ($lastLogin && (time() - $lastLogin) < 60) {
             return $next($request);
         }
 
