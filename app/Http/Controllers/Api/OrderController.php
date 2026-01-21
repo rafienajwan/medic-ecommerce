@@ -49,7 +49,7 @@ class OrderController extends Controller
     public function checkout(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'payment_method' => ['required', 'in:prepaid,postpaid,cod,paypal'],
+            'payment_method' => ['required', 'in:prepaid,cod,paypal'],
             'shipping_address' => ['required', 'string'],
             'shipping_city' => ['required', 'string', 'max:100'],
             'shipping_phone' => ['required', 'string', 'max:20'],
@@ -84,8 +84,8 @@ class OrderController extends Controller
 
             // Calculate totals
             $subtotal = $cart->calculateTotal();
-            $tax = $subtotal * 0.10; // 10% tax
-            $shippingFee = 10000; // Fixed shipping fee
+            $tax = $subtotal * 0.11; // 11% PPN
+            $shippingFee = 15000; // Fixed shipping fee
             $total = $subtotal + $tax + $shippingFee;
 
             // Create order

@@ -38,6 +38,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Session Idle Timeout
+    |--------------------------------------------------------------------------
+    |
+    | This option specifies the number of seconds that a session may remain
+    | idle before it expires due to inactivity. This is checked by the
+    | SessionExpiry middleware on each request.
+    |
+    */
+
+    'idle_timeout' => (int) env('SESSION_IDLE_TIMEOUT', 60),
+
+    /*
+    |--------------------------------------------------------------------------
     | Session Encryption
     |--------------------------------------------------------------------------
     |

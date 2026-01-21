@@ -110,7 +110,7 @@ class CartController extends Controller
     public function update(Request $request, $itemId)
     {
         $validator = Validator::make($request->all(), [
-            'quantity' => ['required', 'integer', 'min:1']
+            'quantity' => ['required', 'integer', 'min:1', 'max:100']
         ]);
 
         if ($validator->fails()) {

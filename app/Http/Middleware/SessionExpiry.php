@@ -32,7 +32,7 @@ class SessionExpiry
         }
 
         $sessionId = session()->getId();
-        $idleTimeout = (int) env('SESSION_IDLE_TIMEOUT', 60); // Configurable timeout in seconds
+        $idleTimeout = (int) config('session.idle_timeout', 60); // Configurable timeout in seconds
 
         // Get session from database
         $session = DB::table('sessions')

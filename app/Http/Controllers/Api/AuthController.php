@@ -169,6 +169,8 @@ class AuthController extends Controller
             'name' => ['sometimes', 'string', 'max:255'],
             'address' => ['nullable', 'string'],
             'city' => ['nullable', 'string', 'max:100'],
+            'province' => ['nullable', 'string', 'max:100'],
+            'postal_code' => ['nullable', 'string', 'max:20'],
             'phone' => ['nullable', 'string', 'max:20'],
             'paypal_id' => ['nullable', 'string', 'max:100'],
             'date_of_birth' => ['nullable', 'date'],
@@ -183,7 +185,7 @@ class AuthController extends Controller
         }
 
         $user->update($request->only([
-            'name', 'address', 'city', 'phone',
+            'name', 'address', 'city', 'province', 'postal_code', 'phone',
             'paypal_id', 'date_of_birth', 'gender'
         ]));
 

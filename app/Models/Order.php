@@ -31,6 +31,7 @@ class Order extends Model
         'total',
         'status',
         'notes',
+        'delivery_confirmed_at',
     ];
 
     protected $casts = [

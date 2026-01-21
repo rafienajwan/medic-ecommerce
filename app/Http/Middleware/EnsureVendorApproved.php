@@ -19,11 +19,21 @@ class EnsureVendorApproved
 
         // Check if user has vendor account
         if (!$user || !$user->hasVendor()) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Anda belum mendaftar sebagai vendor'
+                ], 403);
+            }
             return redirect('/vendor/apply')->with('error', 'Anda belum mendaftar sebagai vendor');
         }
 
         // Check if vendor is approved
         if (!$user->vendor->isApproved()) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Menunggu persetujuan admin'
+                ], 403);
+            }
             return redirect('/vendor/apply')->with('info', 'Menunggu persetujuan admin');
         }
 

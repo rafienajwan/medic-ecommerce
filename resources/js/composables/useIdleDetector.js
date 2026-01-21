@@ -12,10 +12,10 @@ export function useIdleDetector() {
     }
 
     const idleTime = ref(0);
-    const maxIdleTime = 60; // 60 seconds = 1 minute idle timeout
-    const heartbeatInterval = 15; // Ping every 15 seconds
+    const maxIdleTime = 1800; // 30 minutes = 1800 seconds idle timeout
+    const heartbeatInterval = 60; // Ping every 60 seconds
     const showWarning = ref(false);
-    const warningTime = 40; // Show warning after 40 seconds (20s before timeout)
+    const warningTime = 1740; // Show warning after 29 minutes (60s before timeout)
 
     let idleTimer = null;
     let heartbeatTimer = null;
@@ -41,14 +41,14 @@ export function useIdleDetector() {
         if (idleTimer) clearInterval(idleTimer);
         if (heartbeatTimer) clearInterval(heartbeatTimer);
 
-        console.error('🔒 Session expired after 1 minute of inactivity');
+        console.error('🔒 Session expired after 30 minutes of inactivity');
 
         // Redirect to login with timeout message
         router.visit('/login', {
             method: 'get',
             data: {
                 timeout: true,
-                message: 'Your session has expired due to inactivity (1 minute).'
+                message: 'Your session has expired due to inactivity (30 minutes).'
             },
             onSuccess: () => {
                 sessionStorage.clear();
@@ -62,13 +62,13 @@ export function useIdleDetector() {
 
         idleTime.value = timeSinceLastActivity;
 
-        // Show warning at 40 seconds (20 seconds before logout)
+        // Show warning at 29 minutes (1 minute before logout)
         if (timeSinceLastActivity >= warningTime && !showWarning.value) {
             showWarning.value = true;
-            console.warn('⚠️ Session will expire in 20 seconds due to inactivity');
+            console.warn('⚠️ Session will expire in 1 minute due to inactivity');
         }
 
-        // Logout at 60 seconds
+        // Logout at 30 minutes
         if (timeSinceLastActivity >= maxIdleTime) {
             handleSessionExpired();
         }

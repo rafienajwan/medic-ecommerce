@@ -3,6 +3,15 @@
         <div class="container-responsive py-4 sm:py-6 lg:py-8">
             <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6">Products</h1>
 
+            <!-- DEBUG INFO -->
+            <div class="mb-4 p-4 bg-yellow-100 border border-yellow-400 rounded">
+                <p><strong>Debug Info:</strong></p>
+                <p>Products object: {{ typeof products }}</p>
+                <p>Products.data exists: {{ products && products.data ? 'Yes' : 'No' }}</p>
+                <p>Products.data length: {{ products && products.data ? products.data.length : 0 }}</p>
+                <p>Raw products: {{ JSON.stringify(products).substring(0, 200) }}...</p>
+            </div>
+
             <!-- Search and Filters - Responsive -->
             <div class="mb-4 sm:mb-6 flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <input
