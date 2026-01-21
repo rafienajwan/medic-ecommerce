@@ -20,10 +20,11 @@ class SessionExpiry
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Skip session expiry check for logout and login routes
+        // Skip session expiry check for logout, login, and dashboard routes
         if ($request->is('logout') || $request->routeIs('logout') ||
             $request->is('login') || $request->routeIs('login') ||
-            $request->is('register') || $request->routeIs('register')) {
+            $request->is('register') || $request->routeIs('register') ||
+            $request->is('dashboard') || $request->routeIs('dashboard')) {
             return $next($request);
         }
 
