@@ -75,10 +75,22 @@ class OrderController extends Controller
             'status' => 'required|in:pending,processing,shipped,delivered,cancelled'
         ]);
 
-        // Check if this order contains vendor's products
-        $order = Order::whereHas('items.product', function ($query) use ($vendor) {
-            $query->where('vendor_id', $vendor->id);
-        })->findOrFail($orderId);
+        // Ensure ALL items in this order belong to the vendor (security check)
+        $order = Order::where('id', $orderId)
+            ->whereDoesntHave('items.product', function ($query) use ($vendor) {
+                $query->where('vendor_id', '!=', $vendor->id)
+                      ->orWhereNull('vendor_id');
+            })
+            ->whereHas('items.product', function ($query) use ($vendor) {
+                $query->where('vendor_id', $vendor->id);
+            })
+            ->first();
+
+        if (!$order) {
+            return response()->json([
+                'message' => 'Order not found or contains products from other vendors'
+            ], 403);
+        }
 
         // Update order status
         $order->update([

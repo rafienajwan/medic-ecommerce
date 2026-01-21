@@ -13,7 +13,7 @@ class SessionExpiry
     /**
      * Handle an incoming request.
      *
-     * Session expiry: 1 minute (60 seconds) without activity
+     * Session expiry: configurable via SESSION_IDLE_TIMEOUT env variable (default: 60 seconds)
      * Implements sliding window - session extends on each request
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
@@ -32,7 +32,7 @@ class SessionExpiry
         }
 
         $sessionId = session()->getId();
-        $idleTimeout = 60; // 60 seconds = 1 minute
+        $idleTimeout = (int) env('SESSION_IDLE_TIMEOUT', 60); // Configurable timeout in seconds
 
         // Get session from database
         $session = DB::table('sessions')
@@ -44,20 +44,24 @@ class SessionExpiry
             $currentTime = time();
             $idleTime = $currentTime - $lastActivity;
 
-            // If idle time exceeds 1 minute, logout
+            // If idle time exceeds timeout, logout
             if ($idleTime > $idleTimeout) {
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
+                $timeoutMessage = $idleTimeout >= 60
+                    ? round($idleTimeout / 60) . ' minute(s)'
+                    : $idleTimeout . ' seconds';
+
                 if ($request->expectsJson()) {
                     return response()->json([
-                        'message' => 'Session expired due to inactivity (1 minute)',
+                        'message' => "Session expired due to inactivity ({$timeoutMessage})",
                         'expired' => true
                     ], 401);
                 }
 
-                return redirect()->route('login')->with('error', 'Your session has expired due to inactivity (1 minute).');
+                return redirect()->route('login')->with('error', "Your session has expired due to inactivity ({$timeoutMessage}).");
             }
 
             // Update last_activity for sliding window (auto-updated by Laravel)

@@ -25,6 +25,11 @@ test('new users can register', function () {
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
+        'phone' => '08123456789',
+        'address' => 'Jl. Test No. 123',
+        'city' => 'Jakarta',
+        'province' => 'DKI Jakarta',
+        'postal_code' => '12345',
         'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature(),
     ]);
 

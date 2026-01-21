@@ -77,18 +77,23 @@ class OrderController extends Controller
             ], 400);
         }
 
-        // Check stock availability
-        foreach ($cart->items as $item) {
-            if ($item->product->stock < $item->quantity) {
-                return response()->json([
-                    'success' => false,
-                    'message' => "Insufficient stock for {$item->product->name}"
-                ], 400);
-            }
-        }
-
         try {
             DB::beginTransaction();
+
+            // Check stock availability with pessimistic locking to prevent race conditions
+            foreach ($cart->items as $item) {
+                $product = \App\Models\Product::where('id', $item->product_id)
+                    ->lockForUpdate()
+                    ->first();
+
+                if (!$product || $product->stock < $item->quantity) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Insufficient stock for {$item->product->name}"
+                    ], 400);
+                }
+            }
 
             // Calculate totals
             $subtotal = $cart->items->sum(function ($item) {

@@ -16,7 +16,7 @@ class ResetPasswordNotification extends Notification
      *
      * @var string
      */
-    protected $token;
+    public $token;
 
     /**
      * The callback that should be used to create the reset password URL.

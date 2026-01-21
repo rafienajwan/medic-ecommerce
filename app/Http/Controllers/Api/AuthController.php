@@ -27,6 +27,8 @@ class AuthController extends Controller
             'password' => ['required', 'string', 'confirmed', Password::defaults()],
             'address' => ['nullable', 'string'],
             'city' => ['nullable', 'string', 'max:100'],
+            'province' => ['nullable', 'string', 'max:100'],
+            'postal_code' => ['nullable', 'string', 'max:20'],
             'phone' => ['nullable', 'string', 'max:20'],
             'paypal_id' => ['nullable', 'string', 'max:100'],
             'date_of_birth' => ['nullable', 'date'],
@@ -47,6 +49,8 @@ class AuthController extends Controller
             'role' => 'customer',
             'address' => $request->address,
             'city' => $request->city,
+            'province' => $request->province,
+            'postal_code' => $request->postal_code,
             'phone' => $request->phone,
             'paypal_id' => $request->paypal_id,
             'date_of_birth' => $request->date_of_birth,
@@ -150,12 +154,6 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * Update user profile
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     /**
      * Update user profile
      *
