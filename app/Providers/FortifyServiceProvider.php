@@ -35,6 +35,18 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::redirectUserForTwoFactorAuthenticationUsing(RedirectIfTwoFactorAuthenticatable::class);
 
+        // Set last_login_time in session after successful authentication
+        Fortify::authenticateUsing(function (Request $request) {
+            $user = \App\Models\User::where('email', $request->email)->first();
+
+            if ($user && \Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
+                session(['last_login_time' => time()]);
+                return $user;
+            }
+
+            return null;
+        });
+
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
 

@@ -20,15 +20,22 @@ class SessionExpiry
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Skip session expiry check for logout, login, and dashboard routes
+        // Skip session expiry check for logout, login, register, and dashboard routes
         if ($request->is('logout') || $request->routeIs('logout') ||
             $request->is('login') || $request->routeIs('login') ||
             $request->is('register') || $request->routeIs('register') ||
-            $request->is('dashboard') || $request->routeIs('dashboard')) {
+            $request->is('dashboard') || $request->routeIs('dashboard') ||
+            $request->is('products') || $request->is('products/*')) {
             return $next($request);
         }
 
         if (!Auth::check()) {
+            return $next($request);
+        }
+
+        // Check if user just logged in (within last 10 seconds)
+        $lastLogin = session('last_login_time');
+        if ($lastLogin && (time() - $lastLogin) < 10) {
             return $next($request);
         }
 
