@@ -37,8 +37,18 @@ class ProductReviewController extends Controller
             ->first();
 
         return response()->json([
+            'data' => [
+                'reviews' => $reviews->items(),
+                'stats' => $stats,
+                'pagination' => [
+                    'current_page' => $reviews->currentPage(),
+                    'last_page' => $reviews->lastPage(),
+                    'per_page' => $reviews->perPage(),
+                    'total' => $reviews->total(),
+                ],
+            ],
             'reviews' => $reviews,
-            'statistics' => $stats
+            'statistics' => $stats,
         ]);
     }
 
@@ -120,6 +130,36 @@ class ProductReviewController extends Controller
             ->paginate(20);
 
         return response()->json($reviews);
+    }
+
+    /**
+     * Update own review.
+     */
+    public function update(Request $request, $id)
+    {
+        $review = ProductReview::where('user_id', Auth::id())->findOrFail($id);
+
+        $validator = Validator::make($request->all(), [
+            'rating' => ['required', 'integer', 'min:1', 'max:5'],
+            'title' => ['nullable', 'string', 'max:200'],
+            'review' => ['required', 'string', 'min:10', 'max:2000'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $review->update($validator->validated());
+
+        AuditLog::log('review_updated', $review, 'Review updated by user');
+
+        return response()->json([
+            'message' => 'Review updated successfully',
+            'review' => $review->load('user')
+        ]);
     }
 
     /**

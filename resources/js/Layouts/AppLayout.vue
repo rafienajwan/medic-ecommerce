@@ -28,9 +28,6 @@ onMounted(() => {
     // Start idle detection ONLY if user is authenticated
     if (isAuthenticated.value) {
         idleDetector.init();
-        console.log('✅ Idle detector initialized in AppLayout (1 min timeout)');
-    } else {
-        console.log('⏭️ Skipping idle detector - user not authenticated');
     }
 });
 

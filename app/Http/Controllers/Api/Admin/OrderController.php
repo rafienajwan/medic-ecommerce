@@ -29,7 +29,8 @@ class OrderController extends Controller
 
         // Search by order number
         if ($request->has('search') && $request->search) {
-            $query->where('order_number', 'ILIKE', "%{$request->search}%");
+            $search = strtolower(trim($request->search));
+            $query->whereRaw('LOWER(order_number) LIKE ?', ["%{$search}%"]);
         }
 
         // Date range filter

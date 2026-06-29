@@ -21,7 +21,7 @@ class CartController extends Controller
     {
         $cart = $this->getOrCreateCart();
 
-        $cart->load(['items.product.category']);
+        $cart->load(['items.product.category', 'items.product.vendor.user']);
 
         return response()->json([
             'cart' => $cart,
@@ -95,7 +95,7 @@ class CartController extends Controller
             'quantity' => $request->quantity
         ]);
 
-        $cart->load(['items.product']);
+        $cart->load(['items.product.category', 'items.product.vendor.user']);
 
         return response()->json([
             'message' => 'Item added to cart',
@@ -138,7 +138,7 @@ class CartController extends Controller
 
         AuditLog::log('cart_item_updated', $cartItem, 'Updated cart item quantity');
 
-        $cart->load(['items.product']);
+        $cart->load(['items.product.category', 'items.product.vendor.user']);
 
         return response()->json([
             'message' => 'Cart item updated',
@@ -159,7 +159,7 @@ class CartController extends Controller
 
         $cartItem->delete();
 
-        $cart->load(['items.product']);
+        $cart->load(['items.product.category', 'items.product.vendor.user']);
 
         return response()->json([
             'message' => 'Item removed from cart',

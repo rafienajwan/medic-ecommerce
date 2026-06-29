@@ -7,7 +7,6 @@ let isInit = false;
 
 export function useIdleDetector() {
     if (globalInstance) {
-        console.log('Returning existing idle detector');
         return globalInstance;
     }
 
@@ -41,8 +40,6 @@ export function useIdleDetector() {
         if (idleTimer) clearInterval(idleTimer);
         if (heartbeatTimer) clearInterval(heartbeatTimer);
 
-        console.error('🔒 Session expired after 60 minutes of inactivity');
-
         // Redirect to login with timeout message
         router.visit('/login', {
             method: 'get',
@@ -65,7 +62,6 @@ export function useIdleDetector() {
         // Show warning at 59 minutes (1 minute before logout)
         if (timeSinceLastActivity >= warningTime && !showWarning.value) {
             showWarning.value = true;
-            console.warn('⚠️ Session will expire in 1 minute due to inactivity');
         }
 
         // Logout at 60 minutes
@@ -78,13 +74,18 @@ export function useIdleDetector() {
         resetIdleTimer();
     };
 
+    const handleVisibilityChange = () => {
+        if (!document.hidden) {
+            resetIdleTimer();
+            sendActivityPing();
+        }
+    };
+
     const init = () => {
         if (isInit) {
-            console.log('Already initialized');
             return;
         }
 
-        console.log('Initializing idle detector');
         isInit = true;
 
         const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
@@ -93,12 +94,7 @@ export function useIdleDetector() {
             document.addEventListener(event, handleActivity, true);
         });
 
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
-                resetIdleTimer();
-                sendActivityPing();
-            }
-        });
+        document.addEventListener('visibilitychange', handleVisibilityChange);
 
         idleTimer = setInterval(checkIdle, 1000);
 
@@ -111,13 +107,10 @@ export function useIdleDetector() {
         resetIdleTimer();
         sendActivityPing();
 
-        console.log('Idle detector ready');
     };
 
     const cleanup = () => {
         if (!isInit) return;
-
-        console.log('Cleaning up idle detector');
 
         const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
 
@@ -125,7 +118,7 @@ export function useIdleDetector() {
             document.removeEventListener(event, handleActivity, true);
         });
 
-        document.removeEventListener('visibilitychange', handleActivity);
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
 
         if (idleTimer) clearInterval(idleTimer);
         if (heartbeatTimer) clearInterval(heartbeatTimer);
@@ -135,7 +128,6 @@ export function useIdleDetector() {
     };
 
     const unsubscribe = router.on('navigate', () => {
-        console.log('Page navigation - resetting timer');
         resetIdleTimer();
     });
 
@@ -154,8 +146,6 @@ export function useIdleDetector() {
             if (unsubscribe) unsubscribe();
         }
     };
-
-    console.log('Creating NEW idle detector instance (1 min timeout, NOT initialized yet)');
 
     return globalInstance;
 }

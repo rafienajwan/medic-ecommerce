@@ -201,7 +201,7 @@
                                 <div>
                                     <div class="flex items-center gap-2">
                                         <h4 class="font-semibold text-gray-900">{{ review.user?.name || 'Anonymous' }}</h4>
-                                        <span v-if="review.verified_purchase" class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
+                                        <span v-if="review.is_verified_purchase" class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
                                             Verified Purchase
                                         </span>
                                     </div>
@@ -312,8 +312,8 @@ const redirectToLogin = () => {
 const loadReviews = async () => {
     try {
         const response = await axios.get(`/api/products/${props.product.id}/reviews`);
-        reviews.value = response.data.data.reviews;
-        reviewStats.value = response.data.data.stats;
+        reviews.value = response.data.data?.reviews || response.data.reviews?.data || [];
+        reviewStats.value = response.data.data?.stats || response.data.statistics || null;
     } catch (error) {
         console.error('Failed to load reviews:', error);
     }

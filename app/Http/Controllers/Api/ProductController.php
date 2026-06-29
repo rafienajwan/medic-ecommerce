@@ -17,7 +17,7 @@ class ProductController extends Controller
             ->where('is_active', true);
 
         // Filter by category
-        if ($request->has('category')) {
+        if ($request->filled('category')) {
             $query->whereHas('category', function ($q) use ($request) {
                 $q->where('slug', $request->category)
                   ->orWhere('id', $request->category);
@@ -25,22 +25,25 @@ class ProductController extends Controller
         }
 
         // Search by name or description
-        if ($request->has('q')) {
-            $search = $request->q;
+        if ($request->filled('q')) {
+            $search = strtolower(trim($request->q));
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'ILIKE', "%{$search}%")
-                  ->orWhere('description', 'ILIKE', "%{$search}%")
-                  ->orWhere('sku', 'ILIKE', "%{$search}%");
+                $q->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"])
+                  ->orWhereRaw('LOWER(description) LIKE ?', ["%{$search}%"])
+                  ->orWhereRaw('LOWER(sku) LIKE ?', ["%{$search}%"]);
             });
         }
 
         // Sort
-        $sortBy = $request->get('sort_by', 'created_at');
-        $sortOrder = $request->get('sort_order', 'desc');
+        $allowedSorts = ['created_at', 'name', 'price', 'stock'];
+        $sortBy = in_array($request->get('sort_by'), $allowedSorts, true)
+            ? $request->get('sort_by')
+            : 'created_at';
+        $sortOrder = strtolower($request->get('sort_order', 'desc')) === 'asc' ? 'asc' : 'desc';
         $query->orderBy($sortBy, $sortOrder);
 
         // Pagination
-        $perPage = $request->get('per_page', 12);
+        $perPage = min(max((int) $request->get('per_page', 12), 1), 50);
         $products = $query->paginate($perPage);
 
         return response()->json($products);

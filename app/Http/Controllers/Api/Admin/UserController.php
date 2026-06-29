@@ -27,14 +27,14 @@ class UserController extends Controller
 
         // Search
         if ($request->has('search') && $request->search) {
-            $search = $request->search;
+            $search = strtolower(trim($request->search));
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'ILIKE', "%{$search}%")
-                  ->orWhere('email', 'ILIKE', "%{$search}%");
+                $q->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"])
+                  ->orWhereRaw('LOWER(email) LIKE ?', ["%{$search}%"]);
             });
         }
 
-        $perPage = $request->get('per_page', 10);
+        $perPage = min(max((int) $request->get('per_page', 10), 1), 100);
         $users = $query->orderBy('created_at', 'desc')->paginate($perPage);
 
         return response()->json([

@@ -155,11 +155,6 @@ const userMenuOpen = ref(false);
 const mobileMenuOpen = ref(false);
 const page = usePage();
 
-// Debug: Log auth user data
-console.log('Auth User:', page.props.auth?.user);
-console.log('Vendor:', page.props.auth?.user?.vendor);
-console.log('Vendor Status:', page.props.auth?.user?.vendor?.status);
-
 // Check if user is authenticated
 const isAuthenticated = computed(() => !!page.props.auth?.user);
 
@@ -170,12 +165,9 @@ let idleDetectorInstance = null;
 
 // Initialize idle detector ONLY for authenticated users
 if (isAuthenticated.value) {
-    console.log('MainLayout: User is authenticated, preparing idle detector');
     idleDetectorInstance = useIdleDetector();
     idleTime = idleDetectorInstance.idleTime;
     maxIdleTime = idleDetectorInstance.maxIdleTime;
-} else {
-    console.log('MainLayout: User not authenticated, skipping idle detector');
 }
 
 const logout = () => {
@@ -201,10 +193,7 @@ onMounted(() => {
 
     // Initialize idle detector ONLY if user is authenticated
     if (isAuthenticated.value && idleDetectorInstance && typeof idleDetectorInstance.init === 'function') {
-        console.log('MainLayout: Initializing idle detector (1 min timeout)');
         idleDetectorInstance.init();
-    } else {
-        console.log('MainLayout: Skipping idle detector initialization - user not authenticated');
     }
 });
 </script>

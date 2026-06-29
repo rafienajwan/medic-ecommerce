@@ -79,6 +79,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Product Reviews - logged-in users can post
     Route::post('/reviews', [ProductReviewController::class, 'store']);
     Route::get('/reviews/my', [ProductReviewController::class, 'myReviews']);
+    Route::put('/reviews/{id}', [ProductReviewController::class, 'update']);
     Route::delete('/reviews/{id}', [ProductReviewController::class, 'destroy']);
 
     // Vendor routes - customer can apply to become vendor

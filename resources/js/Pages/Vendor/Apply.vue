@@ -23,8 +23,6 @@ const checkVendorStatus = async () => {
         const response = await axios.get('/api/vendor/status');
         vendorStatus.value = response.data;
 
-        console.log('Vendor Status:', response.data);
-
         // If vendor exists and rejected, pre-fill form
         if (response.data.has_vendor && response.data.vendor) {
             const vendor = response.data.vendor;

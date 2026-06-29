@@ -19,9 +19,10 @@ Route::get('/products', function () {
     $products = Product::with(['category', 'vendor.user'])
         ->where('is_active', true)
         ->when(request('q'), function ($query, $search) {
+            $search = strtolower(trim($search));
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'ILIKE', "%{$search}%")
-                  ->orWhere('description', 'ILIKE', "%{$search}%");
+                $q->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"])
+                  ->orWhereRaw('LOWER(description) LIKE ?', ["%{$search}%"]);
             });
         })
         ->when(request('category'), function ($query, $category) {
